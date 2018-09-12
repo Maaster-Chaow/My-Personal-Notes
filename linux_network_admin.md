@@ -30,7 +30,31 @@
   the remote system. Example;
   ```
   ssh-copy-id -i ~/.ssh/id-rsa.pub <remote host IP or name>
+  ```
+  This command will copy your public key into the `authorized_keys` file
+  under your `~/.ssh` folder on the target machine. This file stores all
+  the keys that the machine knows about.
 
+* To keep SSH from disconnection configure the the `ServerAliveInterval`
+  setting. This can be done on a per user basis or for the entire hosts
+  that we connect as follows;
+  1. Per user basis in `~/.ssd/config`
+  ```bash
+  Host icarus
+  ServerAliveInterval 60  # send an alive packet every 60 seconds.
+  Hostname 10.10.10.76
+  Port 22
+  User jdoe
+  ```
+  2. For all host we connect to, then at the top of the config file.
+  ```bash
+  Host *
+  ServerAliveInterval 60
+  ```
+* `/etc/ssh/ssh_config` : This file will impact all users whom make
+  outbound connections. Think of this as client configuration file.
+
+* `/etc/ssh/sshd_config` : This is the global config file for the server.
 
 ### Special Files in Linux
 * `/etc/hosts/` : the file a linux host will check first to resolve
@@ -117,3 +141,20 @@
 ### Packages for Networking
 * iproute2
 * net-tools
+* The three most common methods of sharing files from one linux system to
+  another are:
+  1. *Network File System (NFS)* : is a great choice within a Linux-based
+     environment; however, it doesn't handle mixed environment as well.
+  2. *Samba* : allows to share files between all three major platforms
+     (Windows, Linux and Mac OSX) and is a great choice within mixed
+     environment. Uses the *SMB* protocol. There is some extra work required
+     when sharing files between windows and linux nodes, to handle 
+     permissions. So it is not always the best choice when dealing with
+     UNIX or Linux nodes that need to retain specific permissions.
+  3. *Secure Shell File System (SSHFS)* : is primarily geared toward sharing
+     files between linux nodes. It is possible to connect and access from
+     windows, but only with third-party utilities, as no built-in method
+     exists in Windows. It is popular for its ease of use and security due
+     to encryption. There is nothing to configure on the server other than
+     SSH itself. Also it can be created and disconnected on-demand very
+     quickly.
